@@ -40,10 +40,6 @@ public class CursoServiceTest {
     // REQUISITO: Configurar proteção por PIN de acesso (Professor) Andreus
     @Test
     void configurarPinDeveAdicionarPinAoCurso() {
-        // TODO: Testar a configuração de PIN em um curso (ex: "c1"):
-        // 1. Chamar configurarPin() e verificar se o retorno é 'true'.
-        // 2. Recuperar o curso na persistência (dataManager).
-        // 3. Verificar se o PIN foi adicionado/configurado corretamente.
         boolean ok = cursoService.configurarPin("c1", "0000");
         assertTrue(ok);
         Curso c = dataManager.getCursos().stream()
@@ -57,10 +53,6 @@ public class CursoServiceTest {
     // REQUISITO: Aprovar/rejeitar cursos (Administrador) andreus
     @Test
     void aprovarCursoDeveMudarStatusParaAtivo() {
-        // TODO: Testar a aprovação de um curso PENDENTE (ex: "c2"):
-        // 1. Chamar aprovarCurso() e verificar se o retorno é 'true'.
-        // 2. Recuperar o curso na persistência (dataManager).
-        // 3. Verificar se o status do curso mudou para ATIVO.
         boolean ok = cursoService.aprovarCurso("c2");
         assertTrue(ok);
         Curso c = dataManager.getCursos().stream()
@@ -73,10 +65,6 @@ public class CursoServiceTest {
 
     @Test
     void rejeitarCursoDeveMudarStatusParaInativo() { //Andreus
-        // TODO: Testar a rejeição de um curso (ex: "c1"):
-        // 1. Chamar rejeitarCurso() e verificar se o retorno é 'true'.
-        // 2. Recuperar o curso na persistência (dataManager).
-        // 3. Verificar se o status do curso mudou para INATIVO.
         boolean ok = cursoService.rejeitarCurso("c1");
         assertTrue(ok);
         Curso c = dataManager.getCursos().stream()
@@ -90,10 +78,7 @@ public class CursoServiceTest {
     // REQUISITO: Visualizar catálogo de cursos disponíveis (Estudante/Comum) andreus
     @Test
     void visualizarCatalogoDeveRetornarApenasCursosAtivos() {
-        // TODO: Testar a visualização do catálogo:
-        // 1. Chamar visualizarCatalogo().
-        // 2. Verificar se a lista retornada contém APENAS cursos com StatusCurso.ATIVO.
-        // 3. Verificar se o tamanho da lista está correto (baseado nos dados iniciais).
+
         List<Curso> catalogo = cursoService.visualizarCatalogo();
             assertTrue(catalogo.stream().allMatch(c -> c.getStatus() == StatusCurso.ATIVO));
             long esperado = dataManager.getCursos().stream().filter(c -> c.getStatus() == StatusCurso.ATIVO).count();
