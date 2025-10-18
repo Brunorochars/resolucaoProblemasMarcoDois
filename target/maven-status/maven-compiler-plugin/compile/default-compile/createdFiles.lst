@@ -1,0 +1,10 @@
+service\UsuarioService.class
+model\StatusCurso.class
+service\PostService.class
+MainApp.class
+service\JsonDataManager.class
+model\Curso.class
+model\PapelUsuario.class
+model\Usuario.class
+model\Post.class
+service\CursoService.class

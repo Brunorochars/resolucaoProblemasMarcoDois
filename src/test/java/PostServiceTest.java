@@ -55,27 +55,29 @@ public class PostServiceTest {
         // 3. Verificar se o contador de curtidas do post na persistência (dataManager) aumentou em 1.
     }
 
-    // REQUISITO: Filtrar artigos por temas/tags (Usuário Comum)
+    // REQUISITO: Filtrar artigos por temas/tags (Usuário Comum) gabriel dornelles
     @Test
     void filtrarPorTagDeveRetornarPostsComTagCorrespondente() {
-        // TODO: Testar a filtragem por uma tag existente (ex: "Java"):
-        // 1. Chamar filtrarPorTag() com a tag.
-        // 2. Verificar se a lista retornada tem o tamanho esperado (1).
-        // 3. Verificar se o post retornado é o correto (ex: "Novidades do Java 21").
+        List<Post> resultado = postService.filtrarPorTag("Java");
+        assertEquals(1, resultado.size(), "Deve retornar exatamente 1 post com a tag 'Java'");
+        assertEquals("Novidades do Java 21", resultado.get(0).getTitulo());
+    }
+    
+
+    @Test
+    void filtrarPorTagDeveIgnorarCaseSensitivity() { 
+        List<Post> resultadoMinusculo = postService.filtrarPorTag("java");
+        List<Post> resultadoMaiusculo = postService.filtrarPorTag("JAVA");
+        assertEquals(1, resultadoMinusculo.size(), "Deve retornar 1 post usando 'java' minúsculo");
+        assertEquals(1, resultadoMaiusculo.size(), "Deve retornar 1 post usando 'JAVA' maiúsculo");
+        assertEquals("Novidades do Java 21", resultadoMinusculo.get(0).getTitulo());
+        assertEquals("Novidades do Java 21", resultadoMaiusculo.get(0).getTitulo());
     }
 
     @Test
-    void filtrarPorTagDeveIgnorarCaseSensitivity() {
-        // TODO: Testar a filtragem com uma tag existente, usando case insensível (ex: "java"):
-        // 1. Chamar filtrarPorTag() com a tag em minúsculas ou maiúsculas.
-        // 2. Verificar se o resultado é o mesmo do teste anterior.
-    }
-
-    @Test
-    void filtrarPorTagInexistenteDeveRetornarListaVazia() {
-        // TODO: Testar a filtragem por uma tag que não existe (ex: "Python"):
-        // 1. Chamar filtrarPorTag() com a tag inexistente.
-        // 2. Verificar se a lista retornada está vazia (isEmpty() == true).
+    void filtrarPorTagInexistenteDeveRetornarListaVazia() { 
+        List<Post> resultado = postService.filtrarPorTag("TagInexistente");
+        assertTrue(resultado.isEmpty(), "Deve retornar uma lista vazia quando a tag não existir");
     }
 
     // REQUISITO: Visualizar métricas de engajamento (Administrador)
