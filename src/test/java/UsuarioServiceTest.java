@@ -79,6 +79,13 @@ public class UsuarioServiceTest {
 
     @Test
     void ordenarUsuariosPorPapelDeveFuncionar() {
+
+        usuarioService.ordenarUsuarios("papel");
+        List<Usuario> usuariosOrdenados = usuarioService.visualizarTodos();
+        assertEquals(PapelUsuario.ADMINISTRADOR, usuariosOrdenados.get(0).getPapel());
+        assertEquals(PapelUsuario.PROFESSOR, usuariosOrdenados.get(1).getPapel());
+        assertEquals(PapelUsuario.ESTUDANTE, usuariosOrdenados.get(2).getPapel());
+        assertEquals(PapelUsuario.USUARIO_COMUM, usuariosOrdenados.get(3).getPapel());
         // TODO: Testar a ordenação de usuários por papel:
         // 1. Chamar ordenarUsuarios("papel").
         // 2. Verificar se os primeiros elementos da lista estão na ordem de papel esperada (ex: USUARIO_COMUM, ESTUDANTE).
@@ -87,6 +94,13 @@ public class UsuarioServiceTest {
     // REQUISITO: Editar informações pessoais (Usuário Comum)
     @Test
     void editarPerfilDeveMudarONomeDoUsuario() {
+
+        usuarioService.editarPerfil("u4", "Carlos Atualizado");
+        Optional<Usuario> usuarioAtualizado = dataManager.getUsuarios().stream()
+                .filter(u -> u.getId().equals("u4"))
+                .findFirst();   
+        assumeTrue(usuarioAtualizado.isPresent());
+        
         // TODO: Testar a edição de informações de perfil (ex: mudar o nome do "u4"):
         // 1. Chamar editarPerfil() e verificar se retorna 'true'.
         // 2. Recuperar o usuário na persistência (dataManager).

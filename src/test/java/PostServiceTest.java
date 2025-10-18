@@ -24,6 +24,11 @@ public class PostServiceTest {
     // REQUISITO: Visualizar posts/artigos (Usuário Comum)
     @Test
     void visualizarTodosDeveRetornarTodosOsPostsIniciais() {
+
+        postService.visualizarTodos();
+        List<Post> posts = postService.visualizarTodos();
+        assertEquals(2, posts.size(), "Deve retornar exatamente 2 posts iniciais");
+        
         // TODO: Testar a visualização de todos os posts:
         // 1. Chamar visualizarTodos().
         // 2. Verificar se a lista retornada tem o tamanho esperado (2 nos dados iniciais).
