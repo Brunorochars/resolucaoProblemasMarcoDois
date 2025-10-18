@@ -1,14 +1,11 @@
+import java.util.List;
 import model.Curso;
 import model.StatusCurso;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.CursoService;
 import service.JsonDataManager;
-
-import java.util.List;
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class CursoServiceTest {
 
@@ -47,6 +44,14 @@ public class CursoServiceTest {
         // 1. Chamar configurarPin() e verificar se o retorno é 'true'.
         // 2. Recuperar o curso na persistência (dataManager).
         // 3. Verificar se o PIN foi adicionado/configurado corretamente.
+        boolean ok = cursoService.configurarPin("c1", "0000");
+        assertTrue(ok);
+        Curso c = dataManager.getCursos().stream()
+                .filter(x -> x.getId().equals("c1"))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(c);
+        assertEquals("0000", c.getPinAcesso());
     }
 
     // REQUISITO: Aprovar/rejeitar cursos (Administrador) andreus
@@ -56,6 +61,14 @@ public class CursoServiceTest {
         // 1. Chamar aprovarCurso() e verificar se o retorno é 'true'.
         // 2. Recuperar o curso na persistência (dataManager).
         // 3. Verificar se o status do curso mudou para ATIVO.
+        boolean ok = cursoService.aprovarCurso("c2");
+        assertTrue(ok);
+        Curso c = dataManager.getCursos().stream()
+                .filter(x -> x.getId().equals("c2"))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(c);
+        assertEquals(StatusCurso.ATIVO, c.getStatus());
     }
 
     @Test
@@ -64,6 +77,14 @@ public class CursoServiceTest {
         // 1. Chamar rejeitarCurso() e verificar se o retorno é 'true'.
         // 2. Recuperar o curso na persistência (dataManager).
         // 3. Verificar se o status do curso mudou para INATIVO.
+        boolean ok = cursoService.rejeitarCurso("c1");
+        assertTrue(ok);
+        Curso c = dataManager.getCursos().stream()
+                .filter(x -> x.getId().equals("c1"))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(c);
+        assertEquals(StatusCurso.INATIVO, c.getStatus());
     }
 
     // REQUISITO: Visualizar catálogo de cursos disponíveis (Estudante/Comum) andreus
@@ -73,7 +94,12 @@ public class CursoServiceTest {
         // 1. Chamar visualizarCatalogo().
         // 2. Verificar se a lista retornada contém APENAS cursos com StatusCurso.ATIVO.
         // 3. Verificar se o tamanho da lista está correto (baseado nos dados iniciais).
-    }
+        List<Curso> catalogo = cursoService.visualizarCatalogo();
+            assertTrue(catalogo.stream().allMatch(c -> c.getStatus() == StatusCurso.ATIVO));
+            long esperado = dataManager.getCursos().stream().filter(c -> c.getStatus() == StatusCurso.ATIVO).count();
+            assertEquals(esperado, catalogo.size());
+        }
+    
 
     // REQUISITO: Ingressar em cursos (com inserção de PIN quando necessário) Pietro
     @Test
