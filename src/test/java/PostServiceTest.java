@@ -88,9 +88,11 @@ public class PostServiceTest {
     // REQUISITO: Visualizar métricas de engajamento (Administrador)
     @Test
     void getCurtidasTotaisDeveRetornarSomaCorreta() {
-        // TODO: Testar o cálculo do total de curtidas:
-        // 1. Chamar getCurtidasTotais() e verificar se o total inicial é correto (2).
-        // 2. Simular uma nova interação (ex: curtirPost("p2")).
-        // 3. Chamar getCurtidasTotais() novamente e verificar se o novo total (3) está correto.
+        int totalInicial = postService.getCurtidasTotais();
+        assertEquals(2, totalInicial);
+        postService.curtirPost("p2"); 
+
+        int totalFinal = postService.getCurtidasTotais();
+        assertEquals(3, totalFinal);
     }
 }
