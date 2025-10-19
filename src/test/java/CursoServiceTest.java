@@ -1,9 +1,14 @@
 import java.util.List;
-import model.Curso;
-import model.StatusCurso;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import model.Curso;
+import model.StatusCurso;
 import service.CursoService;
 import service.JsonDataManager;
 
@@ -89,10 +94,11 @@ public class CursoServiceTest {
     // REQUISITO: Ingressar em cursos (com inserção de PIN quando necessário) Pietro
     @Test
     void ingressarCursoComPinDeveFuncionarComPinCorreto() {
-        // TODO: Testar o ingresso em um curso com PIN (ex: "c2"):
-        // 1. Garantir que o curso está ATIVO (configurar se necessário).
-        // 2. Chamar ingressarCurso() com o PIN CORRETO.
-        // 3. Verificar se o retorno é 'true'.
+        
+        cursoService.aprovarCurso("c2");
+
+        boolean ingressou = cursoService.ingressarCurso("c2", "1234");
+        assertTrue(ingressou, "Deve ser possível ingressar em um curso ativo com o PIN correto.");
     }
 
     // REQUISITO: Ingressar em cursos (com inserção de PIN quando necessário) Gabriel Dornelles.
