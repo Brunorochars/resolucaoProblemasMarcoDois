@@ -1,9 +1,15 @@
+import java.util.Optional;
 import java.util.List;
-import model.Curso;
-import model.StatusCurso;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import model.Curso;
+import model.StatusCurso;
 import service.CursoService;
 import service.JsonDataManager;
 
@@ -21,20 +27,28 @@ public class CursoServiceTest {
     // REQUISITO: Criar novos cursos (Professor) Gabriel Ortiz
     @Test
     void criarCursoDeveAdicionarNovoCursoAPersistencia() {
-        // TODO: Testar a criação de um novo curso:
-        // 1. Verificar se o novo curso não é nulo.
-        // 2. Verificar se o título e a descrição estão corretos.
-        // 3. Confirmar que o status inicial é PENDENTE_APROVACAO.
-        // 4. Garantir que o tamanho da lista de cursos aumentou em 1.
+        int tamanhoAntes = dataManager.getCursos().size();
+        Curso novoCurso = cursoService.criarCurso("Curso de Testes unitarios", "Testando", "prof1");
+        assertNotNull(novoCurso);
+        assertEquals(novoCurso.getTitulo(), "Curso de Testes unitarios");
+        assertEquals(novoCurso.getDescricao(), "Testando");
+        assertEquals(StatusCurso.PENDENTE_APROVACAO, novoCurso.getStatus());
+        int tamanhoFinal = dataManager.getCursos().size();
+        assertEquals(tamanhoAntes + 1, tamanhoFinal);
     }
 
     // REQUISITO: Editar cursos existentes (Professor/Admin) Gabriel Ortiz
     @Test
     void editarCursoDeveAtualizarTituloEDescricao() {
-        // TODO: Testar a edição de um curso existente (ex: "c1"):
-        // 1. Chamar editarCurso() e verificar se o retorno é 'true'.
-        // 2. Recuperar o curso na persistência (dataManager).
-        // 3. Verificar se o título e a descrição foram atualizados corretamente.
+        boolean ok = cursoService.editarCurso("c1", "Edição", "Testando edição");
+        assertTrue(ok);
+        Optional<Curso> cursoEditado = dataManager.getCursos().stream()
+                .filter(x -> x.getId().equals("c1"))
+                .findFirst();
+        assertTrue(cursoEditado.isPresent());
+        Curso Atualizado = cursoEditado.get();
+        assertEquals("Edição", Atualizado.getTitulo());
+        assertEquals("Testando edição",  Atualizado.getDescricao());
     }
 
     // REQUISITO: Configurar proteção por PIN de acesso (Professor) Andreus
@@ -89,10 +103,11 @@ public class CursoServiceTest {
     // REQUISITO: Ingressar em cursos (com inserção de PIN quando necessário) Pietro
     @Test
     void ingressarCursoComPinDeveFuncionarComPinCorreto() {
-        // TODO: Testar o ingresso em um curso com PIN (ex: "c2"):
-        // 1. Garantir que o curso está ATIVO (configurar se necessário).
-        // 2. Chamar ingressarCurso() com o PIN CORRETO.
-        // 3. Verificar se o retorno é 'true'.
+        
+        cursoService.aprovarCurso("c2");
+
+        boolean ingressou = cursoService.ingressarCurso("c2", "1234");
+        assertTrue(ingressou, "Deve ser possível ingressar em um curso ativo com o PIN correto.");
     }
 
     // REQUISITO: Ingressar em cursos (com inserção de PIN quando necessário) Gabriel Dornelles.
@@ -108,8 +123,7 @@ public class CursoServiceTest {
 
     @Test
     void ingressarCursoSemPinDeveFuncionar() { //gabriel ortiz
-        // TODO: Testar o ingresso em um curso SEM PIN (ex: "c1"):
-        // 1. Chamar ingressarCurso() passando 'null' ou uma string vazia como PIN.
-        // 2. Verificar se o retorno é 'true'.
+        boolean resultado = cursoService.ingressarCurso("c1", null);
+        assertTrue(resultado);
     }
 }

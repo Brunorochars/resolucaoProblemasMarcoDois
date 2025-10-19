@@ -1,14 +1,16 @@
-import model.Post;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import service.JsonDataManager;
-import service.PostService;
-
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import model.Post;
+import service.JsonDataManager;
+import service.PostService;
 
 public class PostServiceTest {
 
@@ -37,27 +39,37 @@ public class PostServiceTest {
     // REQUISITO: Remover posts inadequados (Administrador)
     @Test
     void removerPostDeveRemoverPostExistente() {
-        // TODO: Testar a remoção de um post existente (ex: "p1"):
-        // 1. Armazenar o tamanho inicial da lista de posts.
-        // 2. Chamar removerPost("p1") e verificar se retorna 'true'.
-        // 3. Verificar se o tamanho da lista diminuiu em 1.
-        // 4. Garantir que o post "p1" não existe mais na persistência (dataManager).
+        int tamanhoInicial = postService.visualizarTodos().size();
+
+        boolean removido = postService.removerPost("p1");
+
+        assertTrue(removido, "A remoção de um post existente deve retornar true");
+        assertEquals(tamanhoInicial - 1, postService.visualizarTodos().size(), "O tamanho da lista deve diminuir em 1");
+
+        Optional<Post> postRemovido = dataManager.getPosts().stream()
+                .filter(p -> p.getId().equals("p1"))
+                .findFirst();
+        assertFalse(postRemovido.isPresent(), "O post 'p1' não deve mais existir na persistência");
     }
 
     @Test
     void removerPostInexistenteDeveRetornarFalso() {
-        // TODO: Testar a remoção de um post que não existe:
-        // 1. Chamar removerPost() com um ID inexistente (ex: "p999").
-        // 2. Verificar se o retorno é 'false'.
+        boolean removido = postService.removerPost("p999");
+        assertFalse(removido, "A remoção de um post que não existe deve retornar false");
     }
 
     // REQUISITO: Curtir/descurtir posts (Usuário Comum)
     @Test
     void curtirPostDeveIncrementarContadorDeCurtidas() {
-        // TODO: Testar a função de curtir post (ex: "p2"):
-        // 1. Obter o número de curtidas iniciais do post.
-        // 2. Chamar curtirPost("p2") e verificar se retorna 'true'.
-        // 3. Verificar se o contador de curtidas do post na persistência (dataManager) aumentou em 1.
+        Optional<Post> postAntes = dataManager.getPosts().stream().filter(p -> p.getId().equals("p2")).findFirst();
+        assumeTrue(postAntes.isPresent(), "O post 'p2' deve existir para este teste.");
+        int curtidasIniciais = postAntes.get().getCurtidas();
+
+        boolean curtiu = postService.curtirPost("p2");
+        assertTrue(curtiu, "Curtir um post existente deve retornar true");
+
+        int curtidasFinais = dataManager.getPosts().stream().filter(p -> p.getId().equals("p2")).findFirst().get().getCurtidas();
+        assertEquals(curtidasIniciais + 1, curtidasFinais, "O número de curtidas deve ser incrementado em 1.");
     }
 
     // REQUISITO: Filtrar artigos por temas/tags (Usuário Comum) gabriel dornelles
@@ -88,9 +100,11 @@ public class PostServiceTest {
     // REQUISITO: Visualizar métricas de engajamento (Administrador)
     @Test
     void getCurtidasTotaisDeveRetornarSomaCorreta() {
-        // TODO: Testar o cálculo do total de curtidas:
-        // 1. Chamar getCurtidasTotais() e verificar se o total inicial é correto (2).
-        // 2. Simular uma nova interação (ex: curtirPost("p2")).
-        // 3. Chamar getCurtidasTotais() novamente e verificar se o novo total (3) está correto.
+        int totalInicial = postService.getCurtidasTotais();
+        assertEquals(2, totalInicial);
+        postService.curtirPost("p2"); 
+
+        int totalFinal = postService.getCurtidasTotais();
+        assertEquals(3, totalFinal);
     }
 }
