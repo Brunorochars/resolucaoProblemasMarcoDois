@@ -23,28 +23,59 @@ public class UsuarioServiceTest {
         this.usuarioService = new UsuarioService(dataManager);
     }
 
-    // REQUISITO: Visualizar todos os usuários cadastrados
     @Test
-    void visualizarTodosDeveRetornarQuatroUsuariosIniciais() {
-        // TODO: Testar a visualização de todos os usuários:
-        // 1. Chamar visualizarTodos().
-        // 2. Verificar se a lista retornada tem o tamanho esperado (4 nos dados iniciais).
+    void visualizarTodosDeveRetornarListaDeUsuariosDoDataManager() {
+        List<Usuario> usuariosMock = List.of(
+                new Usuario("u1", "Test User 1", "test1@example.com", PapelUsuario.ESTUDANTE),
+                new Usuario("u2", "Test User 2", "test2@example.com", PapelUsuario.PROFESSOR)
+        );
+
+        JsonDataManager mockDataManager = new JsonDataManager() {
+            @Override
+            public List<Usuario> getUsuarios() {
+                return usuariosMock;
+            }
+        };
+
+        UsuarioService usuarioService = new UsuarioService(mockDataManager);
+        List<Usuario> resultado = usuarioService.visualizarTodos();
+
+        assertEquals(2, resultado.size());
+        assertSame(usuariosMock, resultado);
     }
 
-    // REQUISITO: Alterar níveis de acesso (Admin)
     @Test
     void alterarNivelAcessoDeveMudarOModeloDeUsuario() {
-        // TODO: Testar a alteração do nível de acesso de um usuário existente (ex: "u3" para PROFESSOR):
-        // 1. Chamar alterarNivelAcesso() e verificar se retorna 'true'.
-        // 2. Recuperar o usuário na persistência (dataManager).
-        // 3. Verificar se o PapelUsuario foi alterado corretamente para o novo papel.
+        Usuario usuarioParaAlterar = new Usuario("u3", "Carla Estudante", "carla@codefolio.com", PapelUsuario.ESTUDANTE);
+        List<Usuario> usuariosMock = List.of(usuarioParaAlterar);
+
+        JsonDataManager mockDataManager = new JsonDataManager() {
+            @Override
+            public List<Usuario> getUsuarios() {
+                return usuariosMock;
+            }
+        };
+
+        UsuarioService usuarioService = new UsuarioService(mockDataManager);
+        boolean resultado = usuarioService.alterarNivelAcesso("u3", PapelUsuario.PROFESSOR);
+
+        assertTrue(resultado);
+        assertEquals(PapelUsuario.PROFESSOR, usuarioParaAlterar.getPapel());
     }
 
     @Test
     void alterarNivelAcessoInexistenteDeveFalhar() {
-        // TODO: Testar a alteração do nível de acesso para um usuário inexistente:
-        // 1. Chamar alterarNivelAcesso() com um ID inexistente (ex: "u999").
-        // 2. Verificar se o retorno é 'false'.
+        JsonDataManager mockDataManager = new JsonDataManager() {
+            @Override
+            public List<Usuario> getUsuarios() {
+                return List.of();
+            }
+        };
+
+        UsuarioService usuarioService = new UsuarioService(mockDataManager);
+        boolean resultado = usuarioService.alterarNivelAcesso("u999", PapelUsuario.ADMINISTRADOR);
+
+        assertFalse(resultado);
     }
 
     // REQUISITO: Filtrar e buscar usuários por nome, email ou papel (Admin)
