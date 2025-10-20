@@ -8,7 +8,7 @@ import service.UsuarioService;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 
 public class UsuarioServiceTest {
 
