@@ -27,7 +27,6 @@ public class PostServiceTest {
     @Test
     void visualizarTodosDeveRetornarTodosOsPostsIniciais() {
 
-        postService.visualizarTodos();
         List<Post> posts = postService.visualizarTodos();
         assertEquals(2, posts.size(), "Deve retornar exatamente 2 posts iniciais");
         

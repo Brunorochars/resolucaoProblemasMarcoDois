@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import service.JsonDataManager;
 import service.UsuarioService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -111,8 +112,27 @@ public class UsuarioServiceTest {
     @Test
     void ordenarUsuariosPorPapelDeveFuncionar() {
 
+        List<Usuario> usuariosIniciais = new ArrayList<>(List.of(
+                new Usuario("u1", "Test User 1", "test1@example.com", PapelUsuario.ESTUDANTE),
+                new Usuario("u2", "Test User 2", "test2@example.com", PapelUsuario.PROFESSOR),
+                new Usuario("u3", "Test User 3", "test3@example.com", PapelUsuario.ADMINISTRADOR),
+                new Usuario("u4", "Test User 4", "test4@example.com", PapelUsuario.USUARIO_COMUM)
+        ));
+
+        JsonDataManager mockDataManager = new JsonDataManager() {
+            @Override
+            public List<Usuario> getUsuarios() {
+                return usuariosIniciais;
+            }
+        };
+
+        UsuarioService usuarioService = new UsuarioService(mockDataManager);
+        
+
         usuarioService.ordenarUsuarios("papel");
         List<Usuario> usuariosOrdenados = usuarioService.visualizarTodos();
+        assertEquals(4, usuariosOrdenados.size());
+
         assertEquals(PapelUsuario.ADMINISTRADOR, usuariosOrdenados.get(0).getPapel());
         assertEquals(PapelUsuario.PROFESSOR, usuariosOrdenados.get(1).getPapel());
         assertEquals(PapelUsuario.ESTUDANTE, usuariosOrdenados.get(2).getPapel());
