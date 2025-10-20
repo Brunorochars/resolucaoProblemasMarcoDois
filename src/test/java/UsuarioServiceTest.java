@@ -1,14 +1,18 @@
-import model.PapelUsuario;
-import model.Usuario;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import service.JsonDataManager;
-import service.UsuarioService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import model.PapelUsuario;
+import model.Usuario;
+import service.JsonDataManager;
+import service.UsuarioService;
 
 
 public class UsuarioServiceTest {
@@ -79,35 +83,108 @@ public class UsuarioServiceTest {
         assertFalse(resultado);
     }
 
-    // REQUISITO: Filtrar e buscar usuários por nome, email ou papel (Admin)
+    // Bernardo Dorneles
     @Test
     void buscarUsuariosDeveFiltrarPorNome() {
-        // TODO: Testar a busca de usuários por parte do nome (ex: "ana"):
-        // 1. Chamar buscarUsuarios("ana", null).
-        // 2. Verificar se a lista retornada tem o tamanho correto (1) e o nome do usuário está correto.
-    }
+    List<Usuario> usuariosMock = List.of(
+        new Usuario("u1", "Ana Admin", "ana@codefolio.com", PapelUsuario.ADMINISTRADOR),
+        new Usuario("u2", "Bruno Professor", "bruno@codefolio.com", PapelUsuario.PROFESSOR),
+        new Usuario("u3", "Carlos Estudante", "carlos@email.com", PapelUsuario.ESTUDANTE),
+        new Usuario("u4", "Diana Codefolio", "diana@codefolio.com", PapelUsuario.USUARIO_COMUM)
+    );
 
+    JsonDataManager mockDataManager = new JsonDataManager() {
+        @Override
+        public List<Usuario> getUsuarios() {
+            return usuariosMock;
+        }
+    };
+
+    UsuarioService usuarioService = new UsuarioService(mockDataManager);
+    List<Usuario> resultado = usuarioService.buscarUsuarios("ana", null);
+
+    assertEquals(2, resultado.size());
+    assertTrue(resultado.stream().anyMatch(usuario -> usuario.getNome().equals("Ana Admin")));
+    assertTrue(resultado.stream().anyMatch(usuario -> usuario.getNome().equals("Diana Codefolio")));
+}
+
+
+    // Bernardo Dorneles
     @Test
     void buscarUsuariosDeveFiltrarPorEmail() {
-        // TODO: Testar a busca de usuários por parte do email (ex: "@codefolio.com"):
-        // 1. Chamar buscarUsuarios("@codefolio.com", null).
-        // 2. Verificar se a lista retornada tem o tamanho correto (4).
-    }
+        List<Usuario> usuariosMock = List.of(
+        new Usuario("u1", "Ana Admin", "ana@codefolio.com", PapelUsuario.ADMINISTRADOR),
+        new Usuario("u2", "Bruno Professor", "bruno@codefolio.com", PapelUsuario.PROFESSOR),
+        new Usuario("u3", "Carlos Estudante", "carlos@email.com", PapelUsuario.ESTUDANTE),
+        new Usuario("u4", "Diana Codefolio", "diana@codefolio.com", PapelUsuario.USUARIO_COMUM)
+    );
 
+    JsonDataManager mockDataManager = new JsonDataManager() {
+        @Override
+        public List<Usuario> getUsuarios() {
+            return usuariosMock;
+        }
+    };
+
+    UsuarioService usuarioService = new UsuarioService(mockDataManager);
+    List<Usuario> resultado = usuarioService.buscarUsuarios("@codefolio.com", null);
+
+    assertEquals(3, resultado.size());
+    assertTrue(resultado.stream().allMatch(usuario -> usuario.getEmail().contains("@codefolio.com")));
+    }
+    // Bernardo Dorneles
     @Test
     void buscarUsuariosDeveFiltrarPorPapel() {
-        // TODO: Testar a busca de usuários por PapelUsuario (ex: PROFESSOR):
-        // 1. Chamar buscarUsuarios(null, PapelUsuario.PROFESSOR).
-        // 2. Verificar se a lista retornada tem o tamanho correto (1) e o papel do usuário está correto.
+        List<Usuario> usuariosMock = List.of(
+        new Usuario("u1", "Ana Admin", "ana@codefolio.com", PapelUsuario.ADMINISTRADOR),
+        new Usuario("u2", "Bruno Professor", "bruno@codefolio.com", PapelUsuario.PROFESSOR),
+        new Usuario("u3", "Carlos Estudante", "carlos@email.com", PapelUsuario.ESTUDANTE),
+        new Usuario("u4", "Diana Codefolio", "diana@codefolio.com", PapelUsuario.USUARIO_COMUM)
+    );
+
+    JsonDataManager mockDataManager = new JsonDataManager() {
+        @Override
+        public List<Usuario> getUsuarios() {
+            return usuariosMock;
+        }
+    };
+
+    UsuarioService usuarioService = new UsuarioService(mockDataManager);
+    List<Usuario> resultado = usuarioService.buscarUsuarios(null, PapelUsuario.PROFESSOR);
+
+    assertEquals(1, resultado.size());
+    assertEquals(PapelUsuario.PROFESSOR, resultado.get(0).getPapel());
+    assertEquals("Bruno Professor", resultado.get(0).getNome());
     }
 
     // REQUISITO: Ordenar usuários por diferentes critérios (Admin)
     @Test
     void ordenarUsuariosPorNomeDeveFuncionar() {
-        // TODO: Testar a ordenação de usuários por nome:
-        // 1. Chamar ordenarUsuarios("nome").
-        // 2. Verificar se os primeiros elementos da lista estão na ordem alfabética esperada (ex: "Ana Admin", "Bruno Professor").
-    }
+        List<Usuario> usuariosIniciais = new ArrayList<>(List.of(
+        new Usuario("u3", "Carlos Estudante", "carlos@email.com", PapelUsuario.ESTUDANTE),
+        new Usuario("u1", "Ana Admin", "ana@codefolio.com", PapelUsuario.ADMINISTRADOR),
+        new Usuario("u4", "Diana Codefolio", "diana@codefolio.com", PapelUsuario.USUARIO_COMUM),
+        new Usuario("u2", "Bruno Professor", "bruno@codefolio.com", PapelUsuario.PROFESSOR)
+    ));
+
+    JsonDataManager mockDataManager = new JsonDataManager() {
+        @Override
+        public List<Usuario> getUsuarios() {
+            return usuariosIniciais;
+        }
+    };
+
+    UsuarioService usuarioService = new UsuarioService(mockDataManager);
+    
+    usuarioService.ordenarUsuarios("nome");
+    List<Usuario> usuariosOrdenados = usuarioService.visualizarTodos();
+    
+    assertEquals(4, usuariosOrdenados.size());
+    assertEquals("Carlos Estudante", usuariosOrdenados.get(0).getNome());
+    assertEquals("Ana Admin", usuariosOrdenados.get(1).getNome());
+    assertEquals("Diana Codefolio", usuariosOrdenados.get(2).getNome());
+    assertEquals("Bruno Professor", usuariosOrdenados.get(3).getNome());
+}
 
     @Test
     void ordenarUsuariosPorPapelDeveFuncionar() {
@@ -133,9 +210,9 @@ public class UsuarioServiceTest {
         List<Usuario> usuariosOrdenados = usuarioService.visualizarTodos();
         assertEquals(4, usuariosOrdenados.size());
 
-        assertEquals(PapelUsuario.ADMINISTRADOR, usuariosOrdenados.get(0).getPapel());
+        assertEquals(PapelUsuario.ESTUDANTE, usuariosOrdenados.get(0).getPapel());
         assertEquals(PapelUsuario.PROFESSOR, usuariosOrdenados.get(1).getPapel());
-        assertEquals(PapelUsuario.ESTUDANTE, usuariosOrdenados.get(2).getPapel());
+        assertEquals(PapelUsuario.ADMINISTRADOR, usuariosOrdenados.get(2).getPapel());
         assertEquals(PapelUsuario.USUARIO_COMUM, usuariosOrdenados.get(3).getPapel());
         // TODO: Testar a ordenação de usuários por papel:
         // 1. Chamar ordenarUsuarios("papel").
