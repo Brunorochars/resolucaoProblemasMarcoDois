@@ -37,7 +37,7 @@ public class CursoServiceTest {
         // 3. Verificar se o título e a descrição foram atualizados corretamente.
     }
 
-    // REQUISITO: Configurar proteção por PIN de acesso (Professor) Andreus
+    //andreus
     @Test
     void configurarPinDeveAdicionarPinAoCurso() {
         boolean ok = cursoService.configurarPin("c1", "0000");
@@ -50,7 +50,7 @@ public class CursoServiceTest {
         assertEquals("0000", c.getPinAcesso());
     }
 
-    // REQUISITO: Aprovar/rejeitar cursos (Administrador) andreus
+    //andreus
     @Test
     void aprovarCursoDeveMudarStatusParaAtivo() {
         boolean ok = cursoService.aprovarCurso("c2");
@@ -63,6 +63,7 @@ public class CursoServiceTest {
         assertEquals(StatusCurso.ATIVO, c.getStatus());
     }
 
+    //andreus
     @Test
     void rejeitarCursoDeveMudarStatusParaInativo() { //Andreus
         boolean ok = cursoService.rejeitarCurso("c1");
@@ -75,7 +76,7 @@ public class CursoServiceTest {
         assertEquals(StatusCurso.INATIVO, c.getStatus());
     }
 
-    // REQUISITO: Visualizar catálogo de cursos disponíveis (Estudante/Comum) andreus
+    //andreus
     @Test
     void visualizarCatalogoDeveRetornarApenasCursosAtivos() {
 
