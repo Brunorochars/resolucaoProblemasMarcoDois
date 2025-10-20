@@ -130,7 +130,10 @@ public class UsuarioServiceTest {
         Optional<Usuario> usuarioAtualizado = dataManager.getUsuarios().stream()
                 .filter(u -> u.getId().equals("u4"))
                 .findFirst();   
-        assumeTrue(usuarioAtualizado.isPresent());
+        assertTrue(usuarioAtualizado.isPresent());
+
+        Usuario usuario = usuarioAtualizado.get();
+        assertEquals("Carlos Atualizado", usuario.getNome());
         
         // TODO: Testar a edição de informações de perfil (ex: mudar o nome do "u4"):
         // 1. Chamar editarPerfil() e verificar se retorna 'true'.
